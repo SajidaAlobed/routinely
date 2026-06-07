@@ -268,7 +268,7 @@ document.getElementById('fab').innerHTML=ico('plus',26,'#fff');
 
 // ── PICKER DATA ───────────────────────────────────────────
 var PH=[0,1,2,3,4,5,6,7,8,9,10,11,12];
-var PM=[0,5,10,15,20,25,30,35,40,45,50,55];
+var PM = Array.from({ length: 60 }, (_, i) => i);
 var PIH=44, PPAD=88; // item height, spacer = (220-44)/2
 
 // ── STORAGE ──────────────────────────────────────────────
@@ -461,7 +461,7 @@ function renderToday(){
 function rowHTML(h,d,showStreak){
   var done=isDone(h.id,d),sk=showStreak?streak(h):null;
   var skH=sk&&sk.v>=2?'<div class="sw"><span class="sf">🔥</span><div class="sn">'+sk.v+'</div><div class="su">'+sk.u+'</div></div>':'<div style="width:40px;flex-shrink:0"></div>';
-  return'<div class="row" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
+  return'<div class="row" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragend="onDragEnd(event)" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
     '<div class="hinfo"><div class="htitle">'+esc(h.title)+'</div><div class="hsub">'+esc(schedLbl(h))+'</div></div>'+skH+
     '<button class="db'+(done?' done':'')+ '" data-hid="'+h.id+'" data-date="'+d+'" data-click="toggle">'+(done?ico('check',18):'')+'</button></div>';
 }
@@ -649,12 +649,11 @@ function getPickerVal(id,arr){
   var i=Math.max(0,Math.min(arr.length-1,Math.round(col.scrollTop/PIH)));
   return arr[i];
 }
-function durToHM(dur){
-  dur=dur||0;
-  var h=Math.min(Math.floor(dur/60),12);
-  var m=dur%60;
-  var mi=Math.round(m/5);if(mi>=PM.length)mi=PM.length-1;
-  return{h:h,mi:mi};
+function durToHM(dur) {
+  dur = dur || 0;
+  var h = Math.min(Math.floor(dur / 60), 12);
+  var m = dur % 60;
+  return { h: h, mi: m };
 }
 function getDurFromPicker(){
   var h=getPickerVal('pcol-h',PH);
@@ -787,7 +786,7 @@ function saveForm(){
     if(h)Object.assign(h,{title:title,type:type,icon:icon,dur:dur,goal:goal,due:due,wday:wday,days:days,streakReq:streakReq});
     save(); go('detail'); 
   } else {
-    S.habits.push({id:uid(),title:title,type:type,icon:icon,color:COLS[S.habits.length%COLS.length],days:days,wday:wday,due:due,dur:dur,goal:goal,arc:false,streakReq:streakReq,at:new Date().toISOString()});
+    S.habits.push({id:uid(),title:title,type:type,icon:icon,color:COLS[S.habits.length%COLS.length],days:days,wday:wday,due:due,dur:dur,goal:goal,arc:false,streakReq:streakReq,order: S.habits.length,at:new Date().toISOString()});
     save(); go(addOrigin);
   }
 }
@@ -864,6 +863,48 @@ function renderCats(){
 function saveCat(id){var v=(document.getElementById('ec-'+id)||{}).value;v=v?v.trim():'';if(!v){alert('Name required');return;}var c=S.cats.find(function(x){return x.id===id;});if(c)c.l=v;editCatId=null;save();renderCats();}
 function delCat(id){if(!confirm('Delete?'))return;S.cats=S.cats.filter(function(c){return c.id!==id;});if(selCat===id)selCat=null;save();renderCats();}
 function addCat(){var inp=document.getElementById('new-cat'),v=inp.value.trim();if(!v){alert('Enter a name');return;}if(S.cats.find(function(c){return c.l.toLowerCase()===v.toLowerCase();})){alert('Already exists');return;}var maxId=Math.max(0,...S.cats.map(function(c){return c.id;}));S.cats.push({id:maxId+1,l:v,d:false});inp.value='';save();renderCats();}
+
+
+// ── REORDER TASKS ──────────────────────────────────────────
+var draggedItem = null;
+
+function onDragStart(e) {
+  draggedItem = e.target;
+  e.dataTransfer.effectAllowed = 'move';
+  e.target.style.opacity = '0.5';
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  var target = e.target.closest('.row');
+  if (target && target !== draggedItem) {
+    var rect = target.getBoundingClientRect();
+    var next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+    target.parentNode.insertBefore(draggedItem, next ? target.nextSibling : target);
+  }
+}
+
+function onDragEnd(e) {
+  e.target.style.opacity = '1';
+  draggedItem = null;
+  saveNewOrder();
+}
+
+function onDrop(e) {
+  e.preventDefault();
+}
+
+function saveNewOrder() {
+  // Select all rows in the list-box
+  var rows = document.querySelectorAll('.list-box .row');
+  rows.forEach(function(row, index) {
+    var hid = row.getAttribute('data-hid');
+    var habit = S.habits.find(function(h) { return h.id === hid; });
+    if (habit) habit.order = index; // Update the order index
+  });
+  save(); // Persist to localStorage
+}
 
 // ── INIT ─────────────────────────────────────────────────
 go('today');
