@@ -417,6 +417,7 @@ function renderToday(){
   if(tasks.length){tH='<div class="sec">One-time tasks</div><div class="list-box">';tasks.forEach(function(h){tH+=rowHTML(h,t,false);});tH+='</div>';}
   document.getElementById('t-tasks').innerHTML=tH;
   bindRows();
+  bindDragDrop();
 }
 
 function rowHTML(h,d,showStreak){
