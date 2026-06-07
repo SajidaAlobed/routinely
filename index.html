@@ -439,8 +439,7 @@ function renderToday(){
   document.getElementById('t-date').textContent=new Date(t+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   var ds=getDayStreak();
   document.getElementById('t-ds').innerHTML=ds>=2?'<div class="dspill">🔥 '+ds+' days</div>':'';
-  var habits=S.habits.filter(function(h){return!h.arc&&req(h,t)&&h.type!=='oneTime';});
-  var tasks=S.habits.filter(function(h){return!h.arc&&req(h,t)&&h.type==='oneTime';});
+  var habits = S.habits.filter(function(h){return!h.arc&&req(h,t)&&h.type!=='oneTime';}).sort((a,b) => (a.order || 0) - (b.order || 0));  var tasks=S.habits.filter(function(h){return!h.arc&&req(h,t)&&h.type==='oneTime';});
   var all=habits.concat(tasks);
   var dn=all.filter(function(h){return isDone(h.id,t);}).length;
   var durT=all.reduce(function(a,h){var c=S.done.find(function(x){return x.hid===h.id&&x.date===t;});return a+(c&&c.dur?c.dur:0);},0);
@@ -471,12 +470,15 @@ function renderToday(){
   bindTouchDrag();
 }
 
-function rowHTML(h,d,showStreak){
+function rowHTML(h, d, showStreak) {
   var done=isDone(h.id,d),sk=showStreak?streak(h):null;
   var skH=sk&&sk.v>=2?'<div class="sw"><span class="sf">🔥</span><div class="sn">'+sk.v+'</div><div class="su">'+sk.u+'</div></div>':'<div style="width:40px;flex-shrink:0"></div>';
-  return '<div class="row" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
+  
+  // Notice: No desktop drag attributes here!
+  return '<div class="swrow" data-hid="'+h.id+'">' +
+    '<div class="swrow-inner row" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
     '<div class="hinfo"><div class="htitle">'+esc(h.title)+'</div><div class="hsub">'+esc(schedLbl(h))+'</div></div>'+skH+
-    '<button class="db'+(done?' done':'')+ '" data-hid="'+h.id+'" data-date="'+d+'" data-click="toggle">'+(done?ico('check',18):'')+'</button></div>';
+    '<button class="db'+(done?' done':'')+ '" data-hid="'+h.id+'" data-date="'+d+'" data-click="toggle">'+(done?ico('check',18):'')+'</button></div></div>';
 }
 
 function bindRows(){
@@ -491,7 +493,10 @@ function bindRows(){
 
 // ── RENDER ALL HABITS ────────────────────────────────────
 function renderHabits(){
-  var t=today(), active=S.habits.filter(function(h){return !h.arc;}), arch=S.habits.filter(function(h){return h.arc;});
+  var t=today()
+  var active = S.habits.filter(function(h){return !h.arc;}).sort((a,b) => (a.order || 0) - (b.order || 0));
+  var arch = S.habits.filter(function(h){return h.arc;});
+
   if(!active.length && !arch.length){
     document.getElementById('s-habits-body').innerHTML='<div class="empty"><div class="ei">🌱</div><h3>No habits yet</h3><p>Tap + to create your first habit.</p></div>';
     return;
@@ -887,50 +892,43 @@ function bindTouchDrag(containerId) {
   if (!container) return;
 
   let draggedItem = null;
-  let dragTimer = null;
 
   container.addEventListener('touchstart', (e) => {
     const row = e.target.closest('.swrow');
     if (!row) return;
-
-    dragTimer = setTimeout(() => {
+    
+    // Only drag if the user holds for 300ms (to not conflict with clicks)
+    const timer = setTimeout(() => {
       draggedItem = row;
       draggedItem.classList.add('is-dragging');
-      // No need to set position absolute anymore, we just shift them live
     }, 300);
+
+    // If they move finger immediately, it's a scroll/click, cancel the timer
+    const cancel = () => clearTimeout(timer);
+    row.addEventListener('touchmove', cancel, { once: true });
+    row.addEventListener('touchend', cancel, { once: true });
   }, { passive: true });
 
   container.addEventListener('touchmove', (e) => {
-    if (!draggedItem) {
-      clearTimeout(dragTimer);
-      return;
-    }
-    e.preventDefault(); // Prevents scroll
+    if (!draggedItem) return;
+    e.preventDefault();
 
     const touch = e.touches[0];
-    // Find the element currently under the finger
     const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
     const targetRow = elUnder ? elUnder.closest('.swrow') : null;
 
     if (targetRow && targetRow !== draggedItem && targetRow.parentElement === container) {
       const rect = targetRow.getBoundingClientRect();
       const isAfter = (touch.clientY - rect.top) > (rect.height / 2);
-      
-      // Live DOM swap (provides visual feedback)
-      if (isAfter) {
-        container.insertBefore(draggedItem, targetRow.nextSibling);
-      } else {
-        container.insertBefore(draggedItem, targetRow);
-      }
+      container.insertBefore(draggedItem, isAfter ? targetRow.nextSibling : targetRow);
     }
   }, { passive: false });
 
   container.addEventListener('touchend', () => {
-    clearTimeout(dragTimer);
     if (draggedItem) {
       draggedItem.classList.remove('is-dragging');
       draggedItem = null;
-      saveNewOrder(); // Save the final positions
+      saveNewOrder(); // This now updates S.habits.order and sorts the array
     }
   });
 }
