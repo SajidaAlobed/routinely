@@ -462,7 +462,7 @@ function renderToday(){
 function rowHTML(h,d,showStreak){
   var done=isDone(h.id,d),sk=showStreak?streak(h):null;
   var skH=sk&&sk.v>=2?'<div class="sw"><span class="sf">🔥</span><div class="sn">'+sk.v+'</div><div class="su">'+sk.u+'</div></div>':'<div style="width:40px;flex-shrink:0"></div>';
-  return'<div class="row" draggable="true" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragend="onDragEnd(event)" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
+  return '<div class="row" data-hid="'+h.id+'" data-date="'+d+'" data-click="detail">'+hIco(h,46)+
     '<div class="hinfo"><div class="htitle">'+esc(h.title)+'</div><div class="hsub">'+esc(schedLbl(h))+'</div></div>'+skH+
     '<button class="db'+(done?' done':'')+ '" data-hid="'+h.id+'" data-date="'+d+'" data-click="toggle">'+(done?ico('check',18):'')+'</button></div>';
 }
@@ -871,58 +871,74 @@ function addCat(){var inp=document.getElementById('new-cat'),v=inp.value.trim();
 var draggedItem = null;
 
 function bindTouchDrag() {
-  const container = document.querySelector('.list-box'); // Assumes habits are in one main list
-  let draggedItem = null;
-  let placeholder = document.createElement('div');
-  placeholder.className = 'placeholder'; // Add css for this if you want an outline
+  const container = document.getElementById('s-habits-body');
+  let draggedRow = null;
+  let dragTimer = null;
+  let startY = 0;
 
+  // We use Event Delegation on the container
   container.addEventListener('touchstart', (e) => {
-    const row = e.target.closest('.row');
+    const row = e.target.closest('.swrow, .row');
     if (!row) return;
-    
-    draggedItem = row;
-    draggedItem.style.position = 'absolute';
-    draggedItem.style.zIndex = '1000';
-    draggedItem.style.opacity = '0.8';
-    draggedItem.style.width = row.offsetWidth + 'px';
-  }, { passive: false });
+
+    // Start a timer to differentiate Swipe (fast) vs Drag (hold)
+    dragTimer = setTimeout(() => {
+      draggedRow = row;
+      startY = e.touches[0].clientY;
+      
+      // Prepare styles for dragging
+      row.style.zIndex = '9999';
+      row.style.opacity = '0.9';
+      row.style.boxShadow = '0 5px 15px rgba(0,0,0,0.15)';
+      row.style.transition = 'none'; // Disable transition during drag
+      
+      // Provide haptic feedback if available
+      if (window.navigator.vibrate) window.navigator.vibrate(50);
+    }, 300); // 300ms hold required to start dragging
+  }, { passive: true });
 
   container.addEventListener('touchmove', (e) => {
-    if (!draggedItem) return;
-    e.preventDefault(); // Stop scrolling while dragging
+    if (!draggedRow) {
+      clearTimeout(dragTimer); // If user moves, it's a swipe, cancel drag
+      return;
+    }
+
+    e.preventDefault(); // Lock page scroll while dragging
+    const touchY = e.touches[0].clientY;
+    const deltaY = touchY - startY;
     
-    const touch = e.touches[0];
-    draggedItem.style.top = (touch.clientY - 20) + 'px';
-    draggedItem.style.left = '20px';
+    // Move the row visually
+    draggedRow.style.transform = `translateY(${deltaY}px)`;
 
-    // Find element under finger
-    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-    const targetRow = elUnder ? elUnder.closest('.row') : null;
+    // Logic to swap positions in the DOM
+    const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    const targetRow = target ? target.closest('.swrow') : null;
 
-    if (targetRow && targetRow !== draggedItem) {
+    if (targetRow && targetRow !== draggedRow && targetRow.parentElement === container) {
       const rect = targetRow.getBoundingClientRect();
-      const isAfter = (touch.clientY - rect.top) > (rect.height / 2);
+      const isAfter = (touchY - rect.top) > (rect.height / 2);
       
       if (isAfter) {
-        container.insertBefore(draggedItem, targetRow.nextSibling);
+        container.insertBefore(draggedRow, targetRow.nextSibling);
       } else {
-        container.insertBefore(draggedItem, targetRow);
+        container.insertBefore(draggedRow, targetRow);
       }
     }
   }, { passive: false });
 
   container.addEventListener('touchend', () => {
-    if (!draggedItem) return;
-    
+    clearTimeout(dragTimer);
+    if (!draggedRow) return;
+
     // Reset styles
-    draggedItem.style.position = 'relative';
-    draggedItem.style.top = 'auto';
-    draggedItem.style.left = 'auto';
-    draggedItem.style.zIndex = 'auto';
-    draggedItem.style.opacity = '1';
+    draggedRow.style.zIndex = 'auto';
+    draggedRow.style.opacity = '1';
+    draggedRow.style.boxShadow = 'none';
+    draggedRow.style.transform = 'translateY(0)';
+    draggedRow.style.transition = 'transform 0.2s ease';
     
-    draggedItem = null;
-    saveNewOrder(); // Re-index and Save to LocalStorage
+    draggedRow = null;
+    saveNewOrder(); // Save to localStorage
   });
 }
 
@@ -954,14 +970,24 @@ function onDrop(e) {
 }
 
 function saveNewOrder() {
-  // Select all rows in the list-box
-  var rows = document.querySelectorAll('.list-box .row');
-  rows.forEach(function(row, index) {
-    var hid = row.getAttribute('data-hid');
-    var habit = S.habits.find(function(h) { return h.id === hid; });
-    if (habit) habit.order = index; // Update the order index
+  const rows = document.querySelectorAll('.swrow');
+  rows.forEach((row, index) => {
+    // Finds the inner div that contains the data-hid attribute
+    const inner = row.querySelector('.swrow-inner');
+    if (!inner) return;
+    
+    const hid = inner.getAttribute('data-hid');
+    const habit = S.habits.find(h => h.id === hid);
+    
+    // Update the habit object and save
+    if (habit) {
+      habit.order = index; 
+    }
   });
-  save(); // Persist to localStorage
+  
+  // Re-sort the S.habits array based on the new order
+  S.habits.sort((a, b) => (a.order || 0) - (b.order || 0));
+  save(); 
 }
 
 // ── INIT ─────────────────────────────────────────────────
