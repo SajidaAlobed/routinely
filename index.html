@@ -181,15 +181,16 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .hidden{display:none!important}
 .swrow {
   user-select: none;
-  -webkit-user-select: none; /* Crucial for iOS */
-  touch-action: none;
-  transition: transform 0.2s ease;
+  -webkit-user-select: none;
+  /* Allows the browser to handle scrolling by default */
+  touch-action: pan-y; 
 }
 .is-dragging {
   opacity: 0.6;
   transform: scale(1.02);
   box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  pointer-events: none; /* Key: Makes the element 'invisible' to touch so we can detect what's underneath */
+  /* When dragging, we explicitly disable default touch behavior to lock the element */
+  touch-action: none; 
 }
 </style>
 </head>
@@ -892,26 +893,29 @@ function bindTouchDrag(containerId) {
   if (!container) return;
 
   let draggedItem = null;
+  let dragTimer = null;
 
   container.addEventListener('touchstart', (e) => {
     const row = e.target.closest('.swrow');
     if (!row) return;
     
-    // Only drag if the user holds for 300ms (to not conflict with clicks)
-    const timer = setTimeout(() => {
+    // Start a timer. If user holds for 300ms, start dragging.
+    dragTimer = setTimeout(() => {
       draggedItem = row;
       draggedItem.classList.add('is-dragging');
     }, 300);
-
-    // If they move finger immediately, it's a scroll/click, cancel the timer
-    const cancel = () => clearTimeout(timer);
-    row.addEventListener('touchmove', cancel, { once: true });
-    row.addEventListener('touchend', cancel, { once: true });
   }, { passive: true });
 
   container.addEventListener('touchmove', (e) => {
-    if (!draggedItem) return;
-    e.preventDefault();
+    // If we haven't hit the 300ms mark, we are NOT dragging.
+    // Allow the browser to scroll naturally.
+    if (!draggedItem) {
+      clearTimeout(dragTimer); 
+      return;
+    }
+
+    // If we ARE dragging (draggedItem exists), lock the screen
+    e.preventDefault(); 
 
     const touch = e.touches[0];
     const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -920,15 +924,18 @@ function bindTouchDrag(containerId) {
     if (targetRow && targetRow !== draggedItem && targetRow.parentElement === container) {
       const rect = targetRow.getBoundingClientRect();
       const isAfter = (touch.clientY - rect.top) > (rect.height / 2);
+      
+      // Live DOM Swap
       container.insertBefore(draggedItem, isAfter ? targetRow.nextSibling : targetRow);
     }
   }, { passive: false });
 
   container.addEventListener('touchend', () => {
+    clearTimeout(dragTimer);
     if (draggedItem) {
       draggedItem.classList.remove('is-dragging');
       draggedItem = null;
-      saveNewOrder(); // This now updates S.habits.order and sorts the array
+      saveNewOrder(); // Save to localStorage
     }
   });
 }
