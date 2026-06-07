@@ -179,6 +179,18 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 #fab{position:fixed;right:20px;bottom:calc(80px + env(safe-area-inset-bottom,0px) + 10px);width:58px;height:58px;background:var(--p);border:none;border-radius:50%;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(91,79,212,.45);z-index:100;transition:transform .15s}
 #fab:active{transform:scale(.91)}
 .hidden{display:none!important}
+.swrow {
+  user-select: none;
+  -webkit-user-select: none; /* Crucial for iOS */
+  touch-action: none;
+  transition: transform 0.2s ease;
+}
+.is-dragging {
+  opacity: 0.6;
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  pointer-events: none; /* Key: Makes the element 'invisible' to touch so we can detect what's underneath */
+}
 </style>
 </head>
 <body>
@@ -870,75 +882,56 @@ function addCat(){var inp=document.getElementById('new-cat'),v=inp.value.trim();
 // ── REORDER TASKS ──────────────────────────────────────────
 var draggedItem = null;
 
-function bindTouchDrag() {
-  const container = document.getElementById('s-habits-body');
-  let draggedRow = null;
-  let dragTimer = null;
-  let startY = 0;
+function bindTouchDrag(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
-  // We use Event Delegation on the container
+  let draggedItem = null;
+  let dragTimer = null;
+
   container.addEventListener('touchstart', (e) => {
-    const row = e.target.closest('.swrow, .row');
+    const row = e.target.closest('.swrow');
     if (!row) return;
 
-    // Start a timer to differentiate Swipe (fast) vs Drag (hold)
     dragTimer = setTimeout(() => {
-      draggedRow = row;
-      startY = e.touches[0].clientY;
-      
-      // Prepare styles for dragging
-      row.style.zIndex = '9999';
-      row.style.opacity = '0.9';
-      row.style.boxShadow = '0 5px 15px rgba(0,0,0,0.15)';
-      row.style.transition = 'none'; // Disable transition during drag
-      
-      // Provide haptic feedback if available
-      if (window.navigator.vibrate) window.navigator.vibrate(50);
-    }, 300); // 300ms hold required to start dragging
+      draggedItem = row;
+      draggedItem.classList.add('is-dragging');
+      // No need to set position absolute anymore, we just shift them live
+    }, 300);
   }, { passive: true });
 
   container.addEventListener('touchmove', (e) => {
-    if (!draggedRow) {
-      clearTimeout(dragTimer); // If user moves, it's a swipe, cancel drag
+    if (!draggedItem) {
+      clearTimeout(dragTimer);
       return;
     }
+    e.preventDefault(); // Prevents scroll
 
-    e.preventDefault(); // Lock page scroll while dragging
-    const touchY = e.touches[0].clientY;
-    const deltaY = touchY - startY;
-    
-    // Move the row visually
-    draggedRow.style.transform = `translateY(${deltaY}px)`;
+    const touch = e.touches[0];
+    // Find the element currently under the finger
+    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetRow = elUnder ? elUnder.closest('.swrow') : null;
 
-    // Logic to swap positions in the DOM
-    const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-    const targetRow = target ? target.closest('.swrow') : null;
-
-    if (targetRow && targetRow !== draggedRow && targetRow.parentElement === container) {
+    if (targetRow && targetRow !== draggedItem && targetRow.parentElement === container) {
       const rect = targetRow.getBoundingClientRect();
-      const isAfter = (touchY - rect.top) > (rect.height / 2);
+      const isAfter = (touch.clientY - rect.top) > (rect.height / 2);
       
+      // Live DOM swap (provides visual feedback)
       if (isAfter) {
-        container.insertBefore(draggedRow, targetRow.nextSibling);
+        container.insertBefore(draggedItem, targetRow.nextSibling);
       } else {
-        container.insertBefore(draggedRow, targetRow);
+        container.insertBefore(draggedItem, targetRow);
       }
     }
   }, { passive: false });
 
   container.addEventListener('touchend', () => {
     clearTimeout(dragTimer);
-    if (!draggedRow) return;
-
-    // Reset styles
-    draggedRow.style.zIndex = 'auto';
-    draggedRow.style.opacity = '1';
-    draggedRow.style.boxShadow = 'none';
-    draggedRow.style.transform = 'translateY(0)';
-    draggedRow.style.transition = 'transform 0.2s ease';
-    
-    draggedRow = null;
-    saveNewOrder(); // Save to localStorage
+    if (draggedItem) {
+      draggedItem.classList.remove('is-dragging');
+      draggedItem = null;
+      saveNewOrder(); // Save the final positions
+    }
   });
 }
 
