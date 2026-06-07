@@ -456,6 +456,7 @@ function renderToday(){
   }
   document.getElementById('t-tasks').innerHTML=tH;
   bindRows();
+  bindTouchDrag();
 }
 
 function rowHTML(h,d,showStreak){
@@ -520,6 +521,7 @@ function renderHabits(){
   document.getElementById('s-habits-body').innerHTML=html;
   bindRows();
   bindSwipe();
+  bindTouchDrag();
 }
 
 // ── SWIPE LOGIC ──────────────────────────────────────────
@@ -867,6 +869,62 @@ function addCat(){var inp=document.getElementById('new-cat'),v=inp.value.trim();
 
 // ── REORDER TASKS ──────────────────────────────────────────
 var draggedItem = null;
+
+function bindTouchDrag() {
+  const container = document.querySelector('.list-box'); // Assumes habits are in one main list
+  let draggedItem = null;
+  let placeholder = document.createElement('div');
+  placeholder.className = 'placeholder'; // Add css for this if you want an outline
+
+  container.addEventListener('touchstart', (e) => {
+    const row = e.target.closest('.row');
+    if (!row) return;
+    
+    draggedItem = row;
+    draggedItem.style.position = 'absolute';
+    draggedItem.style.zIndex = '1000';
+    draggedItem.style.opacity = '0.8';
+    draggedItem.style.width = row.offsetWidth + 'px';
+  }, { passive: false });
+
+  container.addEventListener('touchmove', (e) => {
+    if (!draggedItem) return;
+    e.preventDefault(); // Stop scrolling while dragging
+    
+    const touch = e.touches[0];
+    draggedItem.style.top = (touch.clientY - 20) + 'px';
+    draggedItem.style.left = '20px';
+
+    // Find element under finger
+    const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetRow = elUnder ? elUnder.closest('.row') : null;
+
+    if (targetRow && targetRow !== draggedItem) {
+      const rect = targetRow.getBoundingClientRect();
+      const isAfter = (touch.clientY - rect.top) > (rect.height / 2);
+      
+      if (isAfter) {
+        container.insertBefore(draggedItem, targetRow.nextSibling);
+      } else {
+        container.insertBefore(draggedItem, targetRow);
+      }
+    }
+  }, { passive: false });
+
+  container.addEventListener('touchend', () => {
+    if (!draggedItem) return;
+    
+    // Reset styles
+    draggedItem.style.position = 'relative';
+    draggedItem.style.top = 'auto';
+    draggedItem.style.left = 'auto';
+    draggedItem.style.zIndex = 'auto';
+    draggedItem.style.opacity = '1';
+    
+    draggedItem = null;
+    saveNewOrder(); // Re-index and Save to LocalStorage
+  });
+}
 
 function onDragStart(e) {
   draggedItem = e.target;
