@@ -271,11 +271,71 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
       <p style="padding:0 20px;font-size:13px;color:var(--t3)">Default categories can be renamed but not deleted.</p>
     </div>
   </div>
+  <div class="scr" id="s-settings">
+    <div class="hdr"><h1>Settings</h1></div>
+    <div class="body">
+      <div class="sec">Data backup</div>
+      <div class="list-box">
+        <div class="orow" id="btn-export">
+          <div style="width:38px;height:38px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="exp-ico"></div>
+          <div class="hinfo"><div class="htitle">Export data</div><div class="hsub">Copy all habits & history as JSON</div></div>
+        </div>
+        <div class="orow" id="btn-import">
+          <div style="width:38px;height:38px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="imp-ico"></div>
+          <div class="hinfo"><div class="htitle">Import data</div><div class="hsub">Restore from a previous export</div></div>
+        </div>
+      </div>
+
+      <div class="sec">How to switch to a new file</div>
+      <div style="margin:0 16px 16px;background:var(--card);border-radius:16px;padding:16px 18px">
+        <div style="display:flex;gap:10px;margin-bottom:14px"><div style="width:24px;height:24px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><div style="font-size:14px;line-height:1.55;color:var(--t2)">Tap <b style="color:var(--t1)">Export data</b> above and copy the JSON text.</div></div>
+        <div style="display:flex;gap:10px;margin-bottom:14px"><div style="width:24px;height:24px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><div style="font-size:14px;line-height:1.55;color:var(--t2)">Open the new HTML file and add it to your home screen.</div></div>
+        <div style="display:flex;gap:10px;margin-bottom:14px"><div style="width:24px;height:24px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><div style="font-size:14px;line-height:1.55;color:var(--t2)">Open the new app, go to <b style="color:var(--t1)">Settings → Import data</b> and paste the JSON.</div></div>
+        <div style="display:flex;gap:10px"><div style="width:24px;height:24px;border-radius:50%;background:var(--g);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">✓</div><div style="font-size:14px;line-height:1.55;color:var(--t2)">All your habits and history will be fully restored.</div></div>
+      </div>
+
+      <div class="sec">About</div>
+      <div class="list-box">
+        <div style="padding:14px 20px;font-size:14px;color:var(--t2);line-height:1.6">
+          <b style="color:var(--t1)">Routinely</b> stores all data locally on your device using localStorage. Nothing is sent to any server.
+        </div>
+      </div>
+      <div style="height:24px"></div>
+    </div>
+  </div>
+
+  <!-- Export modal -->
+  <div id="export-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center">
+    <div style="background:var(--card);width:100%;max-width:430px;border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px))">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:18px;font-weight:800">Export data</div>
+        <button onclick="closeExport()" style="background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center" id="exp-close-ico"></button>
+      </div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:10px">Select all the text below, copy it, and keep it somewhere safe.</div>
+      <textarea id="export-txt" readonly onclick="this.select()" style="width:100%;height:140px;padding:12px;border-radius:14px;border:1.5px solid var(--sep);font-size:11px;font-family:monospace;color:var(--t1);background:var(--bg);resize:none;outline:none;line-height:1.5"></textarea>
+      <button id="copy-btn" onclick="copyExport()" style="width:100%;margin-top:12px;padding:15px;background:var(--p);color:#fff;border:none;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">Copy to clipboard</button>
+    </div>
+  </div>
+
+  <!-- Import modal -->
+  <div id="import-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center">
+    <div style="background:var(--card);width:100%;max-width:430px;border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px))">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:18px;font-weight:800">Import data</div>
+        <button onclick="closeImport()" style="background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center" id="imp-close-ico"></button>
+      </div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:10px">Paste your exported JSON below. <b style="color:var(--r)">This will replace all current data.</b></div>
+      <textarea id="import-txt" placeholder="Paste JSON here…" style="width:100%;height:140px;padding:12px;border-radius:14px;border:1.5px solid var(--sep);font-size:11px;font-family:monospace;color:var(--t1);background:var(--bg);resize:none;outline:none;line-height:1.5;font-family:inherit"></textarea>
+      <button onclick="doImport()" style="width:100%;margin-top:12px;padding:15px;background:var(--p);color:#fff;border:none;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">Restore data</button>
+    </div>
+  </div>
+</div>
   <button id="fab"></button>
   <nav id="nav">
     <button class="ni on" id="ni-today" onclick="go('today')"><span id="ni-t-i"></span><span>Today</span></button>
     <button class="ni" id="ni-habits" onclick="go('habits')"><span id="ni-h-i"></span><span>Habits</span></button>
     <button class="ni" id="ni-insights" onclick="go('insights')"><span id="ni-ins-i"></span><span>Insights</span></button>
+    <button class="ni" id="ni-settings" onclick="go('settings')"><span id="ni-set-i"></span><span>Settings</span></button>
   </nav>
 </div>
 <script>
@@ -306,6 +366,7 @@ function ico(n,s,c){s=s||24;c=c||'currentColor';return'<svg width="'+s+'" height
 document.getElementById('ni-t-i').innerHTML=ico('home',24);
 document.getElementById('ni-h-i').innerHTML=ico('list',24);
 document.getElementById('ni-ins-i').innerHTML=ico('chart',24);
+document.getElementById('ni-set-i').innerHTML=ico('gear',24);
 document.getElementById('fab').innerHTML=ico('plus',26,'#fff');
 
 var PH=[0,1,2,3,4,5,6,7,8,9,10,11,12];
@@ -442,7 +503,7 @@ function toggleInsFilter(hid){
 var cur='today', detailHid=null, detailOrigin='today', addOrigin='today', formHid=null;
 var editCatId=null, selCat=null, insRange='7d';
 var detailDate=null, detailSat=null;
-var SCRS=['today','habits','detail','form','insights','cats'];
+var SCRS=['today','habits','detail','form','insights','cats','settings'];
 
 function setDetailDate(d){
   detailDate = d;
@@ -457,11 +518,11 @@ function go(scr,opts){
   SCRS.forEach(function(s){document.getElementById('s-'+s).classList.remove('on');});
   document.getElementById('s-'+scr).classList.add('on');
   cur=scr;
-  var isMain=['today','habits','insights'].indexOf(scr)>=0;
+  var isMain=['today','habits','insights','settings'].indexOf(scr)>=0;
   document.getElementById('nav').style.display=isMain?'':'none';
   document.getElementById('fab').style.display=(scr==='today'||scr==='habits')?'flex':'none';
   document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
-  var nm={today:'ni-today',habits:'ni-habits',insights:'ni-insights'};
+  var nm={today:'ni-today',habits:'ni-habits',insights:'ni-insights',settings:'ni-settings'};
   if(nm[scr])document.getElementById(nm[scr]).classList.add('on');
   
   if(scr==='today') renderToday();
@@ -491,6 +552,7 @@ function go(scr,opts){
     renderForm();
   }
   else if(scr==='insights') renderInsights();
+  else if(scr==='settings') renderSettings();
   else if(scr==='cats'){
     editCatId=null;
     var cb=document.getElementById('cats-back-btn');
@@ -1082,6 +1144,58 @@ function renderCats(){
 function saveCat(id){var v=(document.getElementById('ec-'+id)||{}).value;v=v?v.trim():'';if(!v){alert('Name required');return;}var c=S.cats.find(function(x){return x.id===id;});if(c)c.l=v;editCatId=null;save();renderCats();}
 function delCat(id){if(!confirm('Delete?'))return;S.cats=S.cats.filter(function(c){return c.id!==id;});if(selCat===id)selCat=null;save();renderCats();}
 function addCat(){var inp=document.getElementById('new-cat'),v=inp.value.trim();if(!v){alert('Enter a name');return;}if(S.cats.find(function(c){return c.l.toLowerCase()===v.toLowerCase();})){alert('Already exists');return;}var maxId=Math.max(0,...S.cats.map(function(c){return c.id;}));S.cats.push({id:maxId+1,l:v,d:false});inp.value='';save();renderCats();}
+
+function renderSettings(){
+  // Wire up icons and button handlers
+  var eico=document.getElementById('exp-ico');if(eico)eico.innerHTML=ico('archive',20,'var(--p)');
+  var iico=document.getElementById('imp-ico');if(iico)iico.innerHTML=ico('unarch',20,'#059669');
+  var eci=document.getElementById('exp-close-ico');if(eci)eci.innerHTML=ico('close',18,'var(--t2)');
+  var ici=document.getElementById('imp-close-ico');if(ici)ici.innerHTML=ico('close',18,'var(--t2)');
+  var be=document.getElementById('btn-export');if(be)be.onclick=openExport;
+  var bi=document.getElementById('btn-import');if(bi)bi.onclick=openImport;
+}
+function openExport(){
+  var data=JSON.stringify({habits:S.habits,done:S.done,notes:S.notes,cats:S.cats,_v:1,_exported:new Date().toISOString()},null,2);
+  var el=document.getElementById('export-txt');if(el)el.value=data;
+  var m=document.getElementById('export-modal');if(m){m.style.display='flex';requestAnimationFrame(function(){if(el){el.select();}});}
+}
+function closeExport(){var m=document.getElementById('export-modal');if(m)m.style.display='none';}
+function copyExport(){
+  var el=document.getElementById('export-txt');if(!el)return;
+  el.select();
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(el.value).then(function(){
+        var btn=document.getElementById('copy-btn');if(btn){btn.textContent='✓ Copied!';btn.style.background='var(--g)';setTimeout(function(){btn.textContent='Copy to clipboard';btn.style.background='var(--p)';},2200);}
+      });
+    } else {
+      document.execCommand('copy');
+      var btn=document.getElementById('copy-btn');if(btn){btn.textContent='✓ Copied!';btn.style.background='var(--g)';setTimeout(function(){btn.textContent='Copy to clipboard';btn.style.background='var(--p)';},2200);}
+    }
+  }catch(e){alert('Please manually select all and copy.');}
+}
+function openImport(){
+  var el=document.getElementById('import-txt');if(el)el.value='';
+  var m=document.getElementById('import-modal');if(m){m.style.display='flex';setTimeout(function(){if(el)el.focus();},80);}
+}
+function closeImport(){var m=document.getElementById('import-modal');if(m)m.style.display='none';}
+function doImport(){
+  var el=document.getElementById('import-txt');if(!el)return;
+  var raw=(el.value||'').trim();
+  if(!raw){alert('Please paste your exported JSON first.');return;}
+  var data;
+  try{data=JSON.parse(raw);}catch(e){alert('Invalid JSON — make sure you copied the full export text.');return;}
+  if(!data.habits||!Array.isArray(data.habits)){alert('This doesn\'t look like a Routinely export.');return;}
+  if(!confirm('Replace all current data with the imported data? This cannot be undone.')){return;}
+  S.habits=data.habits||[];
+  S.done=data.done||[];
+  S.notes=data.notes||[];
+  S.cats=data.cats||DEF_CATS;
+  save();
+  closeImport();
+  alert('✓ Data restored! '+S.habits.length+' habits imported.');
+  go('today');
+}
 
 go('today');
 </script>
