@@ -6,8 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Routinely">
-<meta name="theme-color" content="#FFFFFF">
 <title>Routinely</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C6EE8'/%3E%3Cstop offset='1' stop-color='%235B4FD4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='114' fill='url(%23g)'/%3E%3Ccircle cx='256' cy='256' r='150' fill='none' stroke='white' stroke-opacity='0.28' stroke-width='30'/%3E%3Cpath d='M256 106 A150 150 0 0 1 386 331' fill='none' stroke='white' stroke-width='30' stroke-linecap='round'/%3E%3Cpath d='M196 258 l44 44 l84 -96' fill='none' stroke='white' stroke-width='34' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C6EE8'/%3E%3Cstop offset='1' stop-color='%235B4FD4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='114' fill='url(%23g)'/%3E%3Ccircle cx='256' cy='256' r='150' fill='none' stroke='white' stroke-opacity='0.28' stroke-width='30'/%3E%3Cpath d='M256 106 A150 150 0 0 1 386 331' fill='none' stroke='white' stroke-width='30' stroke-linecap='round'/%3E%3Cpath d='M196 258 l44 44 l84 -96' fill='none' stroke='white' stroke-width='34' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--p:#5B4FD4;--p2:#7C6EE8;--pl:#EEF2FF;--g:#22C55E;--o:#F59E0B;--ol:#FFFBEB;--r:#EF4444;--rl:#FEF2F2;--bg:#F2F2F7;--card:#fff;--sep:#E5E5EA;--sep2:#F4F4F8;--t1:#111827;--t2:#6B7280;--t3:#9CA3AF}
@@ -187,6 +188,39 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
 #fab{position:fixed;right:20px;bottom:calc(80px + env(safe-area-inset-bottom,0px) + 10px);width:58px;height:58px;background:var(--p);border:none;border-radius:50%;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(91,79,212,.45);z-index:100;transition:transform .15s}
 #fab:active{transform:scale(.91)}
 .hidden{display:none!important}
+/* ── Collapsible Insights sections ── */
+.ipanel{margin:0 16px 12px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 1px 3px rgba(17,24,39,.04),0 1px 2px rgba(17,24,39,.03)}
+.ipanel-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .12s}
+.ipanel-head:active{background:#f7f7fb}
+.ipanel-ico{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ipanel-tt{flex:1;min-width:0}
+.ipanel-title{font-size:15.5px;font-weight:700;letter-spacing:-.2px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ipanel-sub{font-size:12px;color:var(--t3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.ipanel-chev{flex-shrink:0;color:var(--t3);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex}
+.ipanel.open .ipanel-chev{transform:rotate(90deg)}
+.ipanel-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
+.ipanel.open .ipanel-wrap{grid-template-rows:1fr}
+.ipanel-inner{overflow:hidden;min-height:0}
+.ipanel-pad{padding:0 0 6px}
+.ipanel-sep{height:1px;background:var(--sep2);margin:0 16px}
+/* Hero score ring */
+.ins-hero{margin:14px 16px 16px;background:linear-gradient(135deg,#6B5FE0,#5044C4);border-radius:22px;padding:20px;color:#fff;display:flex;align-items:center;gap:18px;box-shadow:0 8px 24px rgba(91,79,212,.32)}
+.ins-ring-wrap{position:relative;flex-shrink:0;width:92px;height:92px}
+.ins-ring-pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ins-ring-num{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1}
+.ins-ring-lbl{font-size:9px;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.ins-hero-body{flex:1;min-width:0}
+.ins-hero-h{font-size:17px;font-weight:800;letter-spacing:-.3px;margin-bottom:8px}
+.ins-hero-stats{display:flex;gap:16px}
+.ins-hero-st{min-width:0}
+.ins-hero-sv{font-size:18px;font-weight:800;letter-spacing:-.4px;line-height:1}
+.ins-hero-sl{font-size:10.5px;opacity:.82;margin-top:3px;font-weight:500}
+.ins-hero-delta{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;margin-top:10px;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px}
+.ipanel-ctlrow{display:flex;justify-content:flex-end;gap:6px;padding:0 16px 12px}
+/* When charts render inside a panel, strip their own outer card chrome */
+.ipanel-pad .matrix-wrap{margin:12px 12px 14px;box-shadow:none}
+.ipanel-pad .matrix-scroll{border-radius:12px}
+.ipanel-pad .chart-card{margin:6px 12px 12px !important;box-shadow:none}
 </style>
 </head>
 <body>
@@ -260,6 +294,13 @@ var IX={
   chevL:'<polyline points="15,18 9,12 15,6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
   trash:'<polyline points="3,6 5,6 21,6" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2" stroke-linecap="round" stroke-linejoin="round"/>',
   close:'<line x1="18" y1="6" x2="6" y2="18" stroke-linecap="round" stroke-width="2.5"/><line x1="6" y1="6" x2="18" y2="18" stroke-linecap="round" stroke-width="2.5"/>',
+  target:'<circle cx="12" cy="12" r="9" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  pulse:'<polyline points="2,12 7,12 10,5 14,19 17,12 22,12" stroke-linecap="round" stroke-linejoin="round"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 5h3a2 2 0 01-2 4M7 5H4a2 2 0 002 4" stroke-linecap="round" stroke-linejoin="round"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2.5"/><line x1="3" y1="9" x2="21" y2="9" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="5" stroke-linecap="round"/><line x1="16" y1="2" x2="16" y2="5" stroke-linecap="round"/>',
+  tag:'<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="currentColor" stroke="none"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="22" x2="4" y2="15" stroke-linecap="round"/>',
 };
 function ico(n,s,c){s=s||24;c=c||'currentColor';return'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2" style="display:block;flex-shrink:0">'+(IX[n]||'')+'</svg>';}
 document.getElementById('ni-t-i').innerHTML=ico('home',24);
@@ -683,22 +724,43 @@ function saveForm(){
 }
 
 // ── INSIGHTS ─────────────────────────────────────────────
+// Which panels are open. First two default open; rest collapsed for a clean view.
+var insOpen=lget('rt6_insopen',{matrix:true,cons:true,trend:false,rank:false,mdays:false,reasons:false,goals:false});
+function toggleInsPanel(key){
+  insOpen[key]=!insOpen[key];
+  lset('rt6_insopen',insOpen);
+  var p=document.getElementById('ipanel-'+key);
+  if(p)p.classList.toggle('open',insOpen[key]);
+}
+function ipanelHTML(key,icoName,icoBg,icoColor,title,bodyId){
+  var open=!!insOpen[key];
+  return '<div class="ipanel'+(open?' open':'')+'" id="ipanel-'+key+'">'+
+    '<div class="ipanel-head" onclick="toggleInsPanel(\''+key+'\')">'+
+      '<div class="ipanel-ico" style="background:'+icoBg+'">'+ico(icoName,18,icoColor)+'</div>'+
+      '<div class="ipanel-tt"><div class="ipanel-title">'+title+'</div><div class="ipanel-sub" id="'+bodyId+'-sub"></div></div>'+
+      '<div class="ipanel-chev">'+ico('chevR',20)+'</div>'+
+    '</div>'+
+    '<div class="ipanel-wrap"><div class="ipanel-inner"><div class="ipanel-sep"></div><div class="ipanel-pad" id="'+bodyId+'"></div></div></div>'+
+  '</div>';
+}
 function renderInsights(){
   var body=document.getElementById('s-insights-body');
   if(!S.habits.length){body.innerHTML='<div class="empty"><div class="ei">📊</div><h3>No data yet</h3><p>Add habits and start tracking!</p></div>';return;}
   body.innerHTML='<style>#i-filter .chips::-webkit-scrollbar{display:none}</style>'+
     '<div class="rpills"><button class="rp on" data-r="7d">Last 7 days</button><button class="rp" data-r="30d">Last 30 days</button><button class="rp" data-r="week">This week</button><button class="rp" data-r="month">This month</button><button class="rp" data-r="year">This year</button></div>'+
-    '<div class="sec" style="padding-top:14px; padding-bottom:8px">Filter Habits</div><div id="i-filter"></div>'+
-    '<div class="sum" id="i-sum"></div>'+
-    '<div class="sec">Period comparison</div><div class="cmp" id="i-cmp" style="margin-bottom:14px"></div>'+
-    '<div class="sec">Habits matrix</div><div id="i-matrix"></div>'+
-    '<div class="sec" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px"><span>Consistency over time</span><div style="display:flex;gap:6px"><button class="rp on" id="cn-week" style="padding:4px 10px;font-size:11px">Weekly</button><button class="rp" id="cn-month" style="padding:4px 10px;font-size:11px">Monthly</button></div></div><div id="i-cons"></div>'+
-    '<div class="sec" id="i-trend-sec">Trend</div><div id="i-trend"></div>'+
-    '<div class="sec">Most consistent</div><div id="i-rank"></div>'+
-    '<div class="sec">Miss patterns</div><div class="bchart" id="i-mdays"></div>'+
-    '<div class="sec">Missed reasons</div><div class="bchart" id="i-reasons"></div>'+
-    '<div class="sec">Goal distribution</div><div class="bchart" id="i-goals"></div>'+
-    '<div style="height:12px"></div>';
+    // Hero summary — always visible
+    '<div id="i-hero"></div>'+
+    // Filter chips
+    '<div class="sec" style="padding-top:8px;padding-bottom:8px">Filter habits</div><div id="i-filter"></div>'+
+    // Collapsible panels
+    ipanelHTML('matrix','grid','#EEF2FF','var(--p)','Habits matrix','i-matrix')+
+    ipanelHTML('cons','pulse','#E6F1FB','#2563EB','Consistency over time','i-cons-body')+
+    ipanelHTML('trend','chart','#EEEDFE','#7C3AED','Trend','i-trend')+
+    ipanelHTML('rank','trophy','#FEF3C7','#D97706','Most consistent','i-rank')+
+    ipanelHTML('mdays','cal','#FEE2E2','#DC2626','Miss patterns by day','i-mdays')+
+    ipanelHTML('reasons','tag','#D1FAE5','#059669','Missed reasons','i-reasons')+
+    ipanelHTML('goals','flag','#EDE9FE','#6D28D9','Goal distribution','i-goals')+
+    '<div style="height:18px"></div>';
   document.querySelectorAll('.rp').forEach(function(el){el.onclick=function(){if(!el.hasAttribute('data-r'))return;insRange=el.getAttribute('data-r');document.querySelectorAll('.rp[data-r]').forEach(function(p){p.classList.remove('on');});el.classList.add('on');renderInsRange();};});
   renderInsRange();
 }
@@ -761,7 +823,7 @@ function bucketStats(b,active){
 function renderTrend(active){
   var tb=getTrendBuckets(),buckets=tb.buckets;
   var stats=buckets.map(function(b){var s=bucketStats(b,active);s.label=b.label;return s;});
-  document.getElementById('i-trend-sec').textContent=tb.gran+' trend';
+  var trendSecEl=document.getElementById('i-trend-sec');if(trendSecEl)trendSecEl.textContent=tb.gran+' trend';
 
   var W=380,H=200,PL=34,PR=12,PT=14,PB=34;
   var plotW=W-PL-PR,plotH=H-PT-PB;
@@ -795,7 +857,7 @@ function renderTrend(active){
     '<defs><linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7C6EE8"/><stop offset="100%" stop-color="#5B4FD4"/></linearGradient></defs>'+
     grid+bars+'</svg>';
 
-  return '<div style="margin:0 16px 16px;background:var(--card);border-radius:16px;overflow:hidden;padding:14px 8px 6px">'+svg+'</div>';
+  return '<div class="chart-card" style="margin:0 16px 16px;background:var(--card);border-radius:16px;overflow:hidden;padding:14px 8px 6px">'+svg+'</div>';
 }
 
 // ── HABITS MATRIX ────────────────────────────────────────
@@ -868,7 +930,7 @@ function renderConsistency(active,mode){
     legend+='<div style="display:flex;align-items:center;gap:6px;color:var(--t2)"><span style="display:inline-block;width:14px;height:3px;background:'+s.color+';border-radius:2px"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px">'+esc(nm)+'</span></div>';
   });
   legend+='</div>';
-  return '<div style="margin:0 16px 16px;background:var(--card);border-radius:16px;overflow:hidden"><div style="padding:14px 8px 4px">'+svg+'</div>'+legend+'</div>';
+  return '<div class="chart-card" style="margin:0 16px 16px;background:var(--card);border-radius:16px;overflow:hidden"><div style="padding:14px 8px 4px">'+svg+'</div>'+legend+'</div>';
 }
 
 function renderMatrix(dates,active){
@@ -915,6 +977,8 @@ function renderMatrix(dates,active){
   return html;
 }
 
+function setSub(id,txt){var el=document.getElementById(id+'-sub');if(el)el.textContent=txt;}
+
 function renderInsRange(){
   var rng=getRangeDates(),dates=datesInRange(rng.from,rng.to),t=today();
   
@@ -935,39 +999,75 @@ function renderInsRange(){
   dates.forEach(function(d){active.forEach(function(h){if(req(h,d)){tR++;if(isDone(h.id,d)){tD++;var c=S.done.find(function(x){return x.hid===h.id&&x.date===d;});tDur+=((c&&c.dur?c.dur:0)*(c&&c.val?c.val:1));}else if(d<t)tM++;}});});
   
   var pct=tR?Math.round(tD/tR*100):0;
-  document.getElementById('i-sum').innerHTML='<div class="sc"><div class="sv">'+tD+'</div><div class="sl">Done</div></div><div class="sc"><div class="sv">'+tR+'</div><div class="sl">Required</div></div><div class="sc"><div class="sv">'+pct+'%</div><div class="sl">Rate</div></div><div class="sc"><div class="sv">'+(tDur?fmtDur(tDur):'—')+'</div><div class="sl">Productive</div></div>';
   var pd=0,pr=0,pDates=datesInRange(addDays(rng.from,-dates.length),addDays(rng.from,-1));
   pDates.forEach(function(d){active.forEach(function(h){if(req(h,d)){pr++;if(isDone(h.id,d))pd++;}});});
   var pp=pr?Math.round(pd/pr*100):0,delta=pct-pp;
-  var ds=delta>0?'<span class="pos">▲ +'+delta+'%</span>':delta<0?'<span class="neg">▼ '+delta+'%</span>':'<span style="color:var(--t3)">No change</span>';
-  document.getElementById('i-cmp').innerHTML='<div class="cc"><div class="cv">'+pct+'%</div><div class="cl">This period</div><div class="cd">'+ds+'</div></div><div class="cc"><div class="cv">'+pp+'%</div><div class="cl">Prev period</div></div><div class="cc"><div class="cv">'+tM+'</div><div class="cl">Missed</div></div><div class="cc"><div class="cv">'+(tDur?fmtDur(tDur):'—')+'</div><div class="cl">Productive</div></div>';
 
-  // Matrix
-  document.getElementById('i-matrix').innerHTML=renderMatrix(dates,active);
-  // Consistency chart
-  document.getElementById('i-cons').innerHTML=renderConsistency(active,consMode);
-  // Wire toggle buttons (they re-render after click)
-  var cw=document.getElementById('cn-week'),cm=document.getElementById('cn-month');
-  if(cw)cw.onclick=function(){consMode='week';cw.classList.add('on');cm.classList.remove('on');document.getElementById('i-cons').innerHTML=renderConsistency(active,'week');};
-  if(cm)cm.onclick=function(){consMode='month';cm.classList.add('on');cw.classList.remove('on');document.getElementById('i-cons').innerHTML=renderConsistency(active,'month');};
-  // Reflect current mode on buttons
-  if(cw&&cm){if(consMode==='week'){cw.classList.add('on');cm.classList.remove('on');}else{cm.classList.add('on');cw.classList.remove('on');}}
+  // ── HERO score card (always visible) ──
+  var heroEl=document.getElementById('i-hero');
+  if(heroEl){
+    var R=42,C=2*Math.PI*R,off=C*(1-pct/100);
+    var deltaTxt=delta>0?'▲ +'+delta+'% vs last period':delta<0?'▼ '+delta+'% vs last period':'No change vs last period';
+    heroEl.innerHTML='<div class="ins-hero">'+
+      '<div class="ins-ring-wrap"><svg viewBox="0 0 100 100" width="92" height="92">'+
+        '<circle cx="50" cy="50" r="'+R+'" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="9"/>'+
+        '<circle cx="50" cy="50" r="'+R+'" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)"/>'+
+        '</svg><div class="ins-ring-pct"><div class="ins-ring-num">'+pct+'%</div><div class="ins-ring-lbl">Rate</div></div></div>'+
+      '<div class="ins-hero-body"><div class="ins-hero-h">Completion rate</div>'+
+        '<div class="ins-hero-stats">'+
+          '<div class="ins-hero-st"><div class="ins-hero-sv">'+tD+'<span style="font-size:12px;opacity:.7">/'+tR+'</span></div><div class="ins-hero-sl">Completed</div></div>'+
+          '<div class="ins-hero-st"><div class="ins-hero-sv">'+tM+'</div><div class="ins-hero-sl">Missed</div></div>'+
+          '<div class="ins-hero-st"><div class="ins-hero-sv">'+(tDur?fmtDur(tDur):'—')+'</div><div class="ins-hero-sl">Productive</div></div>'+
+        '</div>'+
+        '<div class="ins-hero-delta">'+deltaTxt+'</div>'+
+      '</div></div>';
+  }
 
-  document.getElementById('i-trend').innerHTML=renderTrend(active);
+  // ── Matrix panel ──
+  var mtxEl=document.getElementById('i-matrix');if(mtxEl)mtxEl.innerHTML=renderMatrix(dates,active);
+  setSub('i-matrix',active.length+' habit'+(active.length===1?'':'s')+' · '+dates.length+' days');
+
+  // ── Consistency panel (with inline Weekly/Monthly toggle) ──
+  var consBody=document.getElementById('i-cons-body');
+  if(consBody){
+    consBody.innerHTML='<div class="ipanel-ctlrow"><button class="rp'+(consMode==='week'?' on':'')+'" id="cn-week" style="padding:4px 12px;font-size:11px">Weekly</button><button class="rp'+(consMode==='month'?' on':'')+'" id="cn-month" style="padding:4px 12px;font-size:11px">Monthly</button></div><div id="i-cons"></div>';
+    var consEl=document.getElementById('i-cons');if(consEl)consEl.innerHTML=renderConsistency(active,consMode);
+    var cw=document.getElementById('cn-week'),cm=document.getElementById('cn-month');
+    if(cw)cw.onclick=function(){consMode='week';cw.classList.add('on');cm.classList.remove('on');document.getElementById('i-cons').innerHTML=renderConsistency(active,'week');};
+    if(cm)cm.onclick=function(){consMode='month';cm.classList.add('on');cw.classList.remove('on');document.getElementById('i-cons').innerHTML=renderConsistency(active,'month');};
+  }
+  setSub('i-cons-body',(consMode==='week'?'Weekly':'Monthly')+' rate per habit');
+
+  // ── Trend panel ──
+  var trendEl=document.getElementById('i-trend');if(trendEl)trendEl.innerHTML=renderTrend(active);
+  var tb=getTrendBuckets();setSub('i-trend',tb.gran+' completion over the period');
+
+  // ── Most consistent panel ──
   var stats=active.filter(function(h){return h.type!=='oneTime';}).map(function(h){var r=0,dn=0;dates.forEach(function(d){if(req(h,d)){r++;if(isDone(h.id,d))dn++;}});return{h:h,r:r,dn:dn,p:r?Math.round(dn/r*100):0};}).filter(function(x){return x.r>0;}).sort(function(a,b){return b.p-a.p;}).slice(0,5);
-  document.getElementById('i-rank').innerHTML=stats.length?'<div class="list-box">'+stats.map(function(x,i){return'<div class="rr"><div class="rn">'+(i+1)+'</div><div style="flex:1"><div class="rname">'+(x.h.icon||x.h.title.charAt(0))+' '+esc(x.h.title)+'</div><div class="rsub">'+x.dn+'/'+x.r+' done</div></div><span style="font-size:16px;font-weight:800;color:var(--p)">'+x.p+'%</span></div>';}).join('')+'</div>':'<div style="padding:14px 20px;color:var(--t3);font-size:14px">No data yet</div>';
+  var rankEl=document.getElementById('i-rank');if(rankEl)rankEl.innerHTML=stats.length?'<div style="padding:4px 0 6px">'+stats.map(function(x,i){return'<div class="rr"><div class="rn">'+(i+1)+'</div><div style="flex:1"><div class="rname">'+(x.h.icon||x.h.title.charAt(0))+' '+esc(x.h.title)+'</div><div class="rsub">'+x.dn+'/'+x.r+' done</div></div><span style="font-size:16px;font-weight:800;color:var(--p)">'+x.p+'%</span></div>';}).join('')+'</div>':'<div style="padding:14px 20px;color:var(--t3);font-size:14px">No data yet</div>';
+  setSub('i-rank',stats.length?('Top: '+(stats[0].h.icon?stats[0].h.icon+' ':'')+stats[0].h.title+' · '+stats[0].p+'%'):'No data yet');
+
+  // ── Miss patterns by day ──
   var dayN=['Sat','Sun','Mon','Tue','Wed','Thu','Fri'],jsMap=[6,0,1,2,3,4,5];
   var mByD=dayN.map(function(dn,i){var m=0;dates.forEach(function(d){if(new Date(d+'T12:00:00').getDay()===jsMap[i])active.forEach(function(h){if(req(h,d)&&!isDone(h.id,d)&&d<t)m++;});});return{l:dn,c:m};});
   var mxM=Math.max(1,...mByD.map(function(x){return x.c;}));
-  document.getElementById('i-mdays').innerHTML=mByD.map(function(x){return'<div class="brow"><div class="bl">'+x.l+'</div><div class="bt"><div class="bf bf-c" style="width:'+Math.max(x.c?Math.round(x.c/mxM*100):0,x.c?4:0)+'%">'+x.c+'</div></div></div>';}).join('');
+  var mdaysEl=document.getElementById('i-mdays');if(mdaysEl)mdaysEl.innerHTML='<div class="bchart" style="padding-top:12px">'+mByD.map(function(x){return'<div class="brow"><div class="bl">'+x.l+'</div><div class="bt"><div class="bf bf-c" style="width:'+Math.max(x.c?Math.round(x.c/mxM*100):0,x.c?4:0)+'%">'+x.c+'</div></div></div>';}).join('')+'</div>';
+  var worstDay=mByD.slice().sort(function(a,b){return b.c-a.c;})[0];
+  setSub('i-mdays',worstDay&&worstDay.c>0?('Most misses on '+worstDay.l+' ('+worstDay.c+')'):'No misses in this period 🎉');
+
+  // ── Missed reasons ──
   var reas={};S.notes.filter(function(n){return n.date>=rng.from&&n.date<=rng.to;}).forEach(function(n){reas[n.cat]=(reas[n.cat]||0)+1;});
   var rarr=Object.entries(reas).sort(function(a,b){return b[1]-a[1];}).slice(0,6);var mxR=Math.max(1,...rarr.map(function(x){return x[1];}));
-  document.getElementById('i-reasons').innerHTML=rarr.length?rarr.map(function(x){return'<div class="brow"><div class="bl">'+esc(x[0])+'</div><div class="bt"><div class="bf bf-t" style="width:'+Math.round(x[1]/mxR*100)+'%">'+x[1]+'</div></div></div>';}).join(''):'<div style="padding:0 0 10px;font-size:14px;color:var(--t3)">No reasons recorded</div>';
+  var reasonsEl=document.getElementById('i-reasons');if(reasonsEl)reasonsEl.innerHTML=rarr.length?'<div class="bchart" style="padding-top:12px">'+rarr.map(function(x){return'<div class="brow"><div class="bl">'+esc(x[0])+'</div><div class="bt"><div class="bf bf-t" style="width:'+Math.round(x[1]/mxR*100)+'%">'+x[1]+'</div></div></div>';}).join('')+'</div>':'<div style="padding:14px 20px;font-size:14px;color:var(--t3)">No reasons recorded</div>';
+  setSub('i-reasons',rarr.length?('Top reason: '+rarr[0][0]+' ('+rarr[0][1]+')'):'None logged');
+
+  // ── Goal distribution ──
   var goaled=active.filter(function(h){return h.goal;});
   var bkts=[{l:'0–25%',n:0},{l:'26–50%',n:0},{l:'51–75%',n:0},{l:'76–99%',n:0},{l:'100%',n:0}];
   goaled.forEach(function(h){var p=Math.min(Math.round(timesDone(h)/h.goal*100),100);bkts[p<=25?0:p<=50?1:p<=75?2:p<100?3:4].n++;});
   var mxG=Math.max(1,...bkts.map(function(b){return b.n;}));
-  document.getElementById('i-goals').innerHTML=goaled.length?bkts.map(function(b){return'<div class="brow"><div class="bl">'+b.l+'</div><div class="bt"><div class="bf bf-p" style="width:'+Math.max(b.n?Math.round(b.n/mxG*100):0,b.n?4:0)+'%">'+b.n+'</div></div></div>';}).join(''):'<div style="padding:0 0 10px;font-size:14px;color:var(--t3)">No habits with goals</div>';
+  var goalsEl=document.getElementById('i-goals');if(goalsEl)goalsEl.innerHTML=goaled.length?'<div class="bchart" style="padding-top:12px">'+bkts.map(function(b){return'<div class="brow"><div class="bl">'+b.l+'</div><div class="bt"><div class="bf bf-p" style="width:'+Math.max(b.n?Math.round(b.n/mxG*100):0,b.n?4:0)+'%">'+b.n+'</div></div></div>';}).join('')+'</div>':'<div style="padding:14px 20px;font-size:14px;color:var(--t3)">No habits with goals</div>';
+  setSub('i-goals',goaled.length?(goaled.length+' habit'+(goaled.length===1?'':'s')+' with goals'):'No goals set');
 }
 
 function renderCats(){
