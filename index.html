@@ -13,13 +13,10 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--p:#5B4FD4;--p2:#7C6EE8;--pl:#EEF2FF;--g:#22C55E;--o:#F59E0B;--ol:#FFFBEB;--r:#EF4444;--rl:#FEF2F2;--bg:#F2F2F7;--card:#fff;--sep:#E5E5EA;--sep2:#F4F4F8;--t1:#111827;--t2:#6B7280;--t3:#9CA3AF}
 html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
-/* Fixed: Use 100dvh for mobile address bar support */
 #app{max-width:430px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative}
 .scr{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
 .scr.on{display:flex}
-/* Fixed: Padded bottom so scrollable content isn't covered */
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px))}
-/* Fixed: Nav is now absolute within #app */
 #nav{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-top:1px solid var(--sep);display:flex;flex-shrink:0;padding:8px 0;position:absolute;bottom:0;left:0;right:0;z-index:100;padding-bottom:env(safe-area-inset-bottom, 0px)}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:var(--t3);border:none;background:none;cursor:pointer;padding:4px 0}
 .ni.on{color:var(--p)}
@@ -165,7 +162,6 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
 .swrow-inner{will-change:transform;background:var(--card)}
 .edit-ico-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--sep);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .1s}
 .edit-ico-btn:active{background:var(--bg)}
-/* Habit Matrix */
 .matrix-wrap{margin:0 16px 16px;background:var(--card);border-radius:16px;overflow:hidden}
 .matrix-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
 .matrix-scroll::-webkit-scrollbar{height:6px}
@@ -221,17 +217,14 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
 .ipanel-pad .matrix-wrap{margin:12px 12px 14px;box-shadow:none}
 .ipanel-pad .matrix-scroll{border-radius:12px}
 .ipanel-pad .chart-card{margin:6px 12px 12px !important;box-shadow:none}
-/* ===== Insights control deck ===== */
 .ins-deck{padding:14px 16px 4px}
 .ins-deck-lbl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin:0 2px 8px;display:flex;align-items:center;justify-content:space-between}
 .ins-deck-lbl .ins-deck-act{color:var(--p);font-size:11px;font-weight:700;letter-spacing:.2px;text-transform:none;cursor:pointer;background:none;border:none;font-family:inherit;padding:2px 4px}
-/* Segmented time control */
 .seg{position:relative;display:flex;background:var(--sep2);border-radius:13px;padding:3px;gap:0}
 .seg-ind{position:absolute;top:3px;bottom:3px;border-radius:10px;background:var(--card);box-shadow:0 1px 4px rgba(17,24,39,.1),0 0 0 .5px rgba(17,24,39,.04);transition:transform .32s cubic-bezier(.4,0,.2,1),width .32s cubic-bezier(.4,0,.2,1);z-index:1}
 .seg-opt{flex:1;position:relative;z-index:2;border:none;background:none;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--t2);padding:8px 4px;cursor:pointer;border-radius:10px;transition:color .2s;white-space:nowrap;letter-spacing:-.1px}
 .seg-opt.on{color:var(--p);font-weight:700}
 .seg-opt:active{transform:scale(.97)}
-/* Category scroller */
 .catscroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 4px;margin:0 -2px}
 .catscroll::-webkit-scrollbar{display:none}
 .catchip{flex-shrink:0;display:flex;align-items:center;gap:7px;background:var(--card);border:1.5px solid var(--sep);border-radius:14px;padding:8px 13px 8px 11px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;font-family:inherit}
@@ -242,7 +235,6 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
 .catchip.on{border-color:transparent;box-shadow:0 2px 10px rgba(17,24,39,.1)}
 .catchip.on .catchip-count{background:rgba(255,255,255,.28);color:#fff}
 .catchip.on .catchip-name{color:#fff}
-/* Habit filter sheet */
 .hfilter{padding:0 16px 6px}
 .hfilter-bar{display:flex;flex-wrap:wrap;gap:7px;position:relative}
 .hfilter-bar.collapsed{max-height:84px;overflow:hidden}
@@ -255,6 +247,13 @@ html,body{height:100%;background:var(--card);font-family:-apple-system,BlinkMacS
 .hchip.on{background:var(--pl);color:var(--p);border-color:rgba(91,79,212,.35)}
 .hchip-tick{width:14px;height:14px;border-radius:5px;border:1.5px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s}
 .hchip.on .hchip-tick{background:var(--p);border-color:var(--p)}
+.ppd-row{display:flex;align-items:center;gap:8px;padding:11px 18px;border-bottom:.5px solid var(--sep2);flex-wrap:wrap}
+.ppd-date{background:var(--bg);border:none;border-radius:9px;padding:7px 9px;font-size:13px;color:var(--p);outline:none;font-family:inherit;font-weight:600}
+.ppd-arrow{color:var(--t3);font-size:14px}
+.ppd-del{background:none;border:none;cursor:pointer;padding:6px;margin-left:auto;display:flex;border-radius:8px}
+.ppd-del:active{background:var(--bg)}
+.ppd-add{background:none;border:none;color:var(--p);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;padding:13px 18px;width:100%;text-align:left;display:flex;align-items:center;gap:7px}
+.ppd-active-badge{font-size:10px;font-weight:700;color:#92400E;background:var(--ol);padding:2px 8px;border-radius:10px}
 </style>
 </head>
 <body>
@@ -471,10 +470,17 @@ function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36
 function fmtDur(m){if(!m)return'—';var h=Math.floor(m/60),r=m%60;return h?(r?h+'h '+r+'m':h+'h'):r+'m';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+// ---- Pause logic (with persistent pause history) ----
 function isPaused(h,d){
-  if(!h.pause)return false;
   d=d||today();
-  // pause.from: date pause started (optional). pause.until: null = indefinite, else resume on that date
+  // historical pause intervals (closed when resumed/auto-resumed); until is EXCLUSIVE (= resume date)
+  if(h.pausePeriods&&h.pausePeriods.length){
+    for(var i=0;i<h.pausePeriods.length;i++){
+      var p=h.pausePeriods[i];
+      if(p&&p.from&&p.until&&d>=p.from&&d<p.until)return true;
+    }
+  }
+  if(!h.pause)return false;
   if(h.pause.from&&d<h.pause.from)return false;
   if(h.pause.until===null||h.pause.until===undefined)return true;
   return d<h.pause.until; // paused up to (not including) the resume date
@@ -521,9 +527,45 @@ function confirmPause(){
 }
 function resumeHabit(hid){
   var h=S.habits.find(function(x){return x.id===hid;});if(!h)return;
+  // archive the interval that is ending so past paused days remain non-required
+  if(h.pause&&h.pause.from){
+    h.pausePeriods=h.pausePeriods||[];
+    h.pausePeriods.push({from:h.pause.from,until:today()}); // paused from..today (exclusive)
+    normalizePausePeriods(h);
+  }
   h.pause=null;save();
   if(cur==='habits')renderHabits();else if(cur==='detail')renderDetail();else if(cur==='today')renderToday();
 }
+
+// ---- Past pause period editing ----
+function normalizePausePeriods(h){
+  h.pausePeriods=(h.pausePeriods||[]).filter(function(p){return p&&p.from&&p.until&&p.until>p.from;});
+  h.pausePeriods.sort(function(a,b){return a.from<b.from?-1:1;});
+}
+function addPausePeriod(hid){
+  var h=S.habits.find(function(x){return x.id===hid;});if(!h)return;
+  h.pausePeriods=h.pausePeriods||[];
+  h.pausePeriods.push({from:today(),until:addDays(today(),7)});
+  normalizePausePeriods(h);
+  save();renderDetail();
+}
+function updatePausePeriod(hid,idx,field,val){
+  var h=S.habits.find(function(x){return x.id===hid;});if(!h||!h.pausePeriods||!h.pausePeriods[idx])return;
+  if(!val){renderDetail();return;}
+  var p=h.pausePeriods[idx];
+  if(field==='from'){if(val>=p.until){alert('Start must be before end');renderDetail();return;}p.from=val;}
+  else{if(val<=p.from){alert('End must be after start');renderDetail();return;}p.until=val;}
+  normalizePausePeriods(h);
+  save();renderDetail();
+}
+function deletePausePeriod(hid,idx){
+  var h=S.habits.find(function(x){return x.id===hid;});if(!h||!h.pausePeriods||!h.pausePeriods[idx])return;
+  if(!confirm('Remove this paused period?'))return;
+  h.pausePeriods.splice(idx,1);
+  save();renderDetail();
+}
+function fmtPDshort(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+
 function req(h,d){
   if(h.arc)return false;
   if(isPaused(h,d))return false;
@@ -543,9 +585,9 @@ function status(h,d){
 function streak(h){
   if(h.type==='oneTime')return null;
   var t=today(),c0=(h.at||'2000-01-01').slice(0,10);
-  if(h.type==='daily'){var s=isDone(h.id,t)?1:0,d=addDays(t,-1);while(d>=c0&&s<9999){if(isDone(h.id,d))s++;else break;d=addDays(d,-1);}return{v:s,u:'days'};}
-  if(h.type==='fixed'){var s=0;if(req(h,t)&&isDone(h.id,t))s++;var d=addDays(t,-1);while(d>=c0&&s<9999){if(req(h,d)){if(isDone(h.id,d))s++;else break;}d=addDays(d,-1);}return{v:s,u:'times'};}
-  if(h.type==='weekly'){var s=0,sat=wsat(t),sat0=wsat(c0),i=0;while(sat>=sat0&&i++<500){var ww=wdays(sat),rd=null;for(var j=0;j<7;j++){if(dname(ww[j])===h.wday){rd=ww[j];break;}}if(!rd||rd>t){sat=addDays(sat,-7);continue;}if(rd===t&&!isDone(h.id,t)){sat=addDays(sat,-7);continue;}if(isDone(h.id,rd))s++;else break;sat=addDays(sat,-7);}return{v:s,u:'weeks'};}
+  if(h.type==='daily'){var s=isDone(h.id,t)?1:0,d=addDays(t,-1);while(d>=c0&&s<9999){if(isPaused(h,d)){d=addDays(d,-1);continue;}if(isDone(h.id,d))s++;else break;d=addDays(d,-1);}return{v:s,u:'days'};}
+  if(h.type==='fixed'){var s=0;if(req(h,t)&&isDone(h.id,t))s++;var d=addDays(t,-1);while(d>=c0&&s<9999){if(isPaused(h,d)){d=addDays(d,-1);continue;}if(req(h,d)){if(isDone(h.id,d))s++;else break;}d=addDays(d,-1);}return{v:s,u:'times'};}
+  if(h.type==='weekly'){var s=0,sat=wsat(t),sat0=wsat(c0),i=0;while(sat>=sat0&&i++<500){var ww=wdays(sat),rd=null;for(var j=0;j<7;j++){if(dname(ww[j])===h.wday){rd=ww[j];break;}}if(!rd||rd>t){sat=addDays(sat,-7);continue;}if(isPaused(h,rd)){sat=addDays(sat,-7);continue;}if(rd===t&&!isDone(h.id,t)){sat=addDays(sat,-7);continue;}if(isDone(h.id,rd))s++;else break;sat=addDays(sat,-7);}return{v:s,u:'weeks'};}
   return{v:0,u:'days'};
 }
 function getDayStreak(){
@@ -630,7 +672,6 @@ function setInsAspect(a){
 }
 function toggleHFilter(){
   hFilterExpanded=!hFilterExpanded;
-  // Force a full rebuild of the filter bar by clearing it
   var fEl=document.getElementById('i-filter');if(fEl)fEl.innerHTML='';
   renderInsRange();
 }
@@ -658,7 +699,15 @@ function setDetailDate(d){
 function autoResume(){
   var t=today(),changed=false;
   S.habits.forEach(function(h){
-    if(h.pause&&h.pause.until&&t>=h.pause.until){h.pause=null;changed=true;}
+    if(h.pause&&h.pause.until&&t>=h.pause.until){
+      // record the completed pause interval before clearing
+      if(h.pause.from){
+        h.pausePeriods=h.pausePeriods||[];
+        h.pausePeriods.push({from:h.pause.from,until:h.pause.until});
+        normalizePausePeriods(h);
+      }
+      h.pause=null;changed=true;
+    }
   });
   if(changed)save();
 }
@@ -674,7 +723,7 @@ function go(scr,opts){
   document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
   var nm={today:'ni-today',habits:'ni-habits',insights:'ni-insights',settings:'ni-settings'};
   if(nm[scr])document.getElementById(nm[scr]).classList.add('on');
-  
+
   if(scr==='today') renderToday();
   else if(scr==='habits') renderHabits();
   else if(scr==='detail'){
@@ -858,7 +907,9 @@ function renderDetail(){
   var goalH=h.goal?'<div class="gbar-wrap"><div class="gbar-hdr"><span>Goal</span><span>'+td+'/'+h.goal+'</span></div><div class="gbar"><div class="gfill" style="width:'+gp+'%"></div></div></div>':'';
   var dDateDisp=detailDate===t?'Today':new Date(detailDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   var selH='';
-  if(req(h,detailDate)&&detailDate<=t){
+  if(isPaused(h,detailDate)){
+     selH='<div class="sec">'+dDateDisp+'</div><div class="list-box"><div style="padding:16px 20px;color:#92400E;font-size:14px;text-align:center;font-weight:600;background:var(--ol)">⏸ Paused on this day — not counted as missed</div></div>';
+  } else if(req(h,detailDate)&&detailDate<=t){
      var cRec=S.done.find(function(x){return x.hid===h.id&&x.date===detailDate;});
      var selDone=!!cRec,cVal=cRec?(cRec.val||1):0;
      var exN=S.notes.find(function(x){return x.hid===h.id&&x.date===detailDate;});
@@ -867,10 +918,31 @@ function renderDetail(){
      selH='<div class="sec">'+dDateDisp+'</div><div class="list-box"><div class="row" style="cursor:default"><div class="hinfo"><div class="htitle">'+(selDone?'Completed amount':'Mark as done')+'</div></div>'+countUI+'</div><div class="miss-section"><div class="miss-hdr"><span class="miss-hdr-title">Missed reason</span><button class="manage-btn" id="det-mgr-btn">'+ico('gear',14)+' Manage</button></div><div class="chips" id="det-chips"></div><input class="note-inp" id="det-note" type="text" placeholder="Optional note…" value="'+exNote+'"><button class="save-r-btn" id="det-sr-btn">Save reason</button></div></div>';
   } else if(detailDate>t){selH='<div class="sec">'+dDateDisp+'</div><div class="list-box"><div style="padding:16px 20px;color:var(--t2);font-size:14px;text-align:center;font-weight:500">Future date</div></div>';}
   else{selH='<div class="sec">'+dDateDisp+'</div><div class="list-box"><div style="padding:16px 20px;color:var(--t2);font-size:14px;text-align:center;font-weight:500">Not scheduled for this day</div></div>';}
+
+  // ---- Paused periods editor ----
+  var pausesH='';
+  if(h.type!=='oneTime'){
+    var pps=(h.pausePeriods||[]).slice().sort(function(a,b){return a.from<b.from?-1:1;});
+    var rowsH=pps.map(function(p,idx){
+      var isActive=(today()>=p.from&&today()<p.until);
+      return '<div class="ppd-row">'+
+          '<input class="ppd-date" type="date" value="'+p.from+'" onchange="updatePausePeriod(\''+h.id+'\','+idx+',\'from\',this.value)">'+
+          '<span class="ppd-arrow">→</span>'+
+          '<input class="ppd-date" type="date" value="'+p.until+'" onchange="updatePausePeriod(\''+h.id+'\','+idx+',\'until\',this.value)">'+
+          (isActive?'<span class="ppd-active-badge">active</span>':'')+
+          '<button class="ppd-del" onclick="deletePausePeriod(\''+h.id+'\','+idx+')">'+ico('trash',16,'var(--r)')+'</button>'+
+        '</div>';
+    }).join('');
+    if(!rowsH)rowsH='<div style="padding:14px 18px;font-size:13px;color:var(--t3);line-height:1.5">No paused periods recorded. Add one to retroactively mark a date range as paused — those days won\'t count as missed and won\'t break streaks.</div>';
+    pausesH='<div class="sec">Paused periods</div><div class="fcard" style="margin:0 16px 16px">'+rowsH+
+      '<button class="ppd-add" onclick="addPausePeriod(\''+h.id+'\')">'+ico('plus',16,'var(--p)')+'Add paused period</button></div>'+
+      '<p style="margin:-8px 20px 8px;font-size:12px;color:var(--t3);line-height:1.5">The end date is the resume day — the habit is required again starting that day.</p>';
+  }
+
   var html='<div class="det-hero" style="background:'+h.color+';border-bottom:1px solid var(--sep)">'+hIco(h,52)+'<div style="font-size:22px;font-weight:700;letter-spacing:-.2px;margin-top:8px">'+esc(h.title)+'</div><div class="det-sched">'+esc(schedLbl(h,detailDate))+'</div>'+(aspectOf(h)?'<span style="display:inline-block;margin-top:8px;margin-right:6px;font-size:12px;background:rgba(0,0,0,.06);color:rgba(0,0,0,.6);padding:3px 10px;border-radius:20px;font-weight:600">'+esc(aspectOf(h).l)+'</span>':'')+(isPaused(h)?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(245,158,11,.18);color:#92400E;padding:3px 10px;border-radius:20px;font-weight:600">⏸ '+esc(pauseLabel(h))+'</span>':'')+(h.streakReq===false?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(245,158,11,.15);color:#92400E;padding:3px 10px;border-radius:20px;font-weight:500">Excluded from day streak</span>':'')+(h.arc?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(239,68,68,.12);color:var(--r);padding:3px 10px;border-radius:20px;font-weight:500">Archived</span>':'')+'</div>'+
     '<div class="sec" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px"><span>Week</span><div style="display:flex;gap:4px"><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="detailSat=addDays(detailSat,-7);renderDetail()">'+ico('chevL',18,'var(--t2)')+'</button><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="detailSat=addDays(detailSat,7);renderDetail()">'+ico('chevR',18,'var(--t2)')+'</button></div></div><div class="wstrip">'+wH+'</div>'+
     '<div class="sgrid">'+(sk?'<div class="sb"><div class="sbv">'+sk.v+'</div><div class="sbl">Streak ('+sk.u+')</div></div>':'<div class="sb"><div class="sbv">—</div><div class="sbl">Streak</div></div>')+'<div class="sb"><div class="sbv">'+td+'</div><div class="sbl">Times done</div></div><div class="sb"><div class="sbv">'+fmtDur(tdur)+'</div><div class="sbl">Productive</div></div><div class="sb"><div class="sbv">'+(gp!==null?gp+'%':'—')+'</div><div class="sbl">Goal progress</div></div></div>'+
-    '<div class="sec">Consistency</div><div class="sgrid" style="grid-template-columns:1fr 1fr 1fr"><div class="sb"><div class="sbv">'+(cons7!==null?cons7+'%':'—')+'</div><div class="sbl">Last 7 days</div></div><div class="sb"><div class="sbv">'+(cons30!==null?cons30+'%':'—')+'</div><div class="sbl">Last 30 days</div></div><div class="sb"><div class="sbv">'+(consAll!==null?consAll+'%':'—')+'</div><div class="sbl">All-time</div></div></div>'+goalH+selH+
+    '<div class="sec">Consistency</div><div class="sgrid" style="grid-template-columns:1fr 1fr 1fr"><div class="sb"><div class="sbv">'+(cons7!==null?cons7+'%':'—')+'</div><div class="sbl">Last 7 days</div></div><div class="sb"><div class="sbv">'+(cons30!==null?cons30+'%':'—')+'</div><div class="sbl">Last 30 days</div></div><div class="sb"><div class="sbv">'+(consAll!==null?consAll+'%':'—')+'</div><div class="sbl">All-time</div></div></div>'+goalH+selH+pausesH+
     '<div class="sec">Options</div><div class="list-box">'+(h.type!=='oneTime'?'<div class="orow" id="det-pause-btn">'+ico(isPaused(h)?'play':'pause',20,'var(--t2)')+'<span class="orow-text">'+(isPaused(h)?'Resume habit':'Pause habit')+'</span>'+ico('chevR',18,'var(--t3)')+'</div>':'')+'<div class="orow" id="det-arc-btn">'+ico(h.arc?'unarch':'archive',20,'var(--t2)')+'<span class="orow-text">'+(h.arc?'Unarchive':'Archive')+'</span>'+ico('chevR',18,'var(--t3)')+'</div></div><div style="height:24px"></div>';
   document.getElementById('s-detail-body').innerHTML=html;
   (function(hid,d){
@@ -978,7 +1050,6 @@ function positionSegInd(){
 }
 function bindSegmented(){
   var seg=document.getElementById('i-seg');if(!seg)return;
-  // position after layout settles
   requestAnimationFrame(function(){requestAnimationFrame(positionSegInd);});
   if(!window._segResize){window._segResize=true;window.addEventListener('resize',function(){positionSegInd();});}
   seg.querySelectorAll('.seg-opt').forEach(function(el){
@@ -1032,20 +1103,16 @@ function renderAspectBreakdown(dates){
   var el=document.getElementById('i-aspects');if(!el)return;
   var t=today();
   var habits=S.habits.filter(function(h){return!h.arc&&h.type!=='oneTime';});
-  // Build group list: every aspect + an "Uncategorized" bucket if needed
   var groups=S.aspects.map(function(a){return{id:String(a.id),l:a.l,c:a.c||'#EEF2FF',habits:habits.filter(function(h){return h.aspect===a.id;})};});
   var uncat=habits.filter(function(h){return!h.aspect;});
   if(uncat.length)groups.push({id:'none',l:'Uncategorized',c:'#E5E5EA',habits:uncat});
-  // Compute stats per group over the date range
   groups.forEach(function(g){
     var r=0,dn=0,dur=0;
     dates.forEach(function(d){g.habits.forEach(function(h){if(req(h,d)&&d<=t){r++;if(isDone(h.id,d)){dn++;var c=S.done.find(function(x){return x.hid===h.id&&x.date===d;});dur+=((c&&c.dur?c.dur:0)*(c&&c.val?c.val:1));}}});});
     g.req=r;g.done=dn;g.dur=dur;g.pct=r?Math.round(dn/r*100):null;g.hcount=g.habits.length;
   });
-  // Only groups that actually have habits
   var withHabits=groups.filter(function(g){return g.hcount>0;});
   if(withHabits.length<1){el.innerHTML='<div style="padding:16px 20px;font-size:14px;color:var(--t3)">No categories yet. Assign categories to habits to compare them here.</div>';setSub('i-aspects','No categories assigned');return;}
-  // Groups with measurable data (had something required), sorted best-first
   var rated=withHabits.filter(function(g){return g.pct!==null;}).sort(function(a,b){return b.pct-a.pct;});
   var noData=withHabits.filter(function(g){return g.pct===null;});
   var best=rated.length?rated[0]:null;
@@ -1074,9 +1141,7 @@ function renderAspectBreakdown(dates){
   else setSub('i-aspects',withHabits.length+' categor'+(withHabits.length===1?'y':'ies'));
 }
 function renderInsRange(){var rng=getRangeDates(),dates=datesInRange(rng.from,rng.to),t=today();var allHabits=S.habits.filter(function(h){return!h.arc;}).sort(function(a,b){return(a.order||0)-(b.order||0);});
-// Aspect filter row
 var afEl=document.getElementById('i-aspect-filter');if(afEl){var usedAspects=S.aspects.filter(function(a){return allHabits.some(function(h){return h.aspect===a.id;});});var hasUncat=allHabits.some(function(h){return!h.aspect;});if(usedAspects.length){var totalH=allHabits.length;var afHTML='<div class="ins-deck" style="padding-top:4px"><div class="ins-deck-lbl">Category</div><div class="catscroll">';var allOn=insAspect==='all';afHTML+='<button class="catchip'+(allOn?' on':'')+'" onclick="setInsAspect(\'all\')" style="'+(allOn?'background:var(--p)':'')+'"><span class="catchip-dot" style="background:'+(allOn?'#fff':'linear-gradient(135deg,#7C6EE8,#5B4FD4)')+'"></span><span class="catchip-name">All</span><span class="catchip-count">'+totalH+'</span></button>';usedAspects.forEach(function(a){var on=insAspect===String(a.id);var cnt=allHabits.filter(function(h){return h.aspect===a.id;}).length;afHTML+='<button class="catchip'+(on?' on':'')+'" onclick="setInsAspect(\''+a.id+'\')" style="'+(on?'background:'+a.c:'')+'"><span class="catchip-dot" style="background:'+(on?'rgba(0,0,0,.32)':a.c)+'"></span><span class="catchip-name"'+(on?' style="color:rgba(0,0,0,.72)"':'')+'>'+esc(a.l)+'</span><span class="catchip-count"'+(on?' style="background:rgba(0,0,0,.1);color:rgba(0,0,0,.55)"':'')+'>'+cnt+'</span></button>';});if(hasUncat){var on=insAspect==='none';var cnt=allHabits.filter(function(h){return!h.aspect;}).length;afHTML+='<button class="catchip'+(on?' on':'')+'" onclick="setInsAspect(\'none\')" style="'+(on?'background:#9CA3AF':'')+'"><span class="catchip-dot" style="background:'+(on?'#fff':'#D1D5DB')+'"></span><span class="catchip-name"'+(on?' style="color:#fff"':'')+'>Uncategorized</span><span class="catchip-count">'+cnt+'</span></button>';}afHTML+='</div></div>';afEl.innerHTML=afHTML;}else afEl.innerHTML='';}
-// Habits scoped to the chosen aspect
 var allActive=allHabits.filter(function(h){if(insAspect==='all')return true;if(insAspect==='none')return!h.aspect;return String(h.aspect)===insAspect;});
 var fEl=document.getElementById('i-filter');
 if(fEl){
