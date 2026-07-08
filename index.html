@@ -588,6 +588,41 @@ function streak(h){
   if(h.type==='weekly'){var s=0,sat=wsat(t),sat0=wsat(c0),i=0;while(sat>=sat0&&i++<500){var ww=wdays(sat),rd=null;for(var j=0;j<7;j++){if(dname(ww[j])===h.wday){rd=ww[j];break;}}if(!rd||rd>t){sat=addDays(sat,-7);continue;}if(isPaused(h,rd)){sat=addDays(sat,-7);continue;}if(rd===t&&!isDone(h.id,t)){sat=addDays(sat,-7);continue;}if(isDone(h.id,rd))s++;else break;sat=addDays(sat,-7);}return{v:s,u:'weeks'};}
   return{v:0,u:'days'};
 }
+/* ---- Best (longest-ever) streak: walk the habit's full history forward from
+   creation to today, tracking the longest run of consecutive completions.
+   Same unit/rules as the live streak: paused days are skipped (don't break
+   the run), and a required-but-not-yet-done today doesn't break it either
+   (since the day isn't over). Returns {v,u} like streak(), or null for
+   one-time tasks / habits with no eligible days yet. ---- */
+function bestStreak(h){
+  if(h.type==='oneTime')return null;
+  var t=today(),c0=(h.at||'2000-01-01').slice(0,10);
+  if(h.type==='daily'||h.type==='fixed'){
+    var unit=h.type==='daily'?'days':'times',best=0,cur=0,d=c0;
+    while(d<=t){
+      if(isPaused(h,d)){d=addDays(d,1);continue;}
+      if(h.type==='fixed'&&!req(h,d)){d=addDays(d,1);continue;}
+      if(d===t&&!isDone(h.id,d)){d=addDays(d,1);continue;} // pending today: neither extends nor breaks
+      if(isDone(h.id,d)){cur++;if(cur>best)best=cur;}else{cur=0;}
+      d=addDays(d,1);
+    }
+    return best>0?{v:best,u:unit}:{v:0,u:unit};
+  }
+  if(h.type==='weekly'){
+    var best=0,cur=0,sat=wsat(c0),satEnd=wsat(t),i=0;
+    while(sat<=satEnd&&i++<600){
+      var ww=wdays(sat),rd=null;
+      for(var j=0;j<7;j++){if(dname(ww[j])===h.wday){rd=ww[j];break;}}
+      if(!rd||rd>t){sat=addDays(sat,7);continue;}
+      if(isPaused(h,rd)){sat=addDays(sat,7);continue;}
+      if(rd===t&&!isDone(h.id,t)){sat=addDays(sat,7);continue;} // pending today's occurrence
+      if(isDone(h.id,rd)){cur++;if(cur>best)best=cur;}else{cur=0;}
+      sat=addDays(sat,7);
+    }
+    return{v:best,u:'weeks'};
+  }
+  return{v:0,u:'days'};
+}
 function getDayStreak(){
   var t=today();
   var tracked=S.habits.filter(function(h){return!h.arc&&h.type!=='oneTime'&&h.streakReq!==false;});
@@ -733,7 +768,7 @@ function go(scr,opts){
   else if(scr==='habits') renderHabits();
   else if(scr==='detail'){
     if(opts.hid){
-      detailHid=opts.hid;detailDate=today();detailSat=wsat(detailDate);
+      detailHid=opts.hid;detailDate=opts.date||today();detailSat=wsat(detailDate);
       var exN=S.notes.find(function(n){return n.hid===detailHid&&n.date===detailDate;});
       selCat=exN?(S.cats.find(function(c){return c.l===exN.cat})||{}).id:null;
     }
@@ -853,7 +888,7 @@ function bindRows(){
       else if(a==='detail'){
         var inner=el.closest('.swrow-inner');
         if(inner&&inner._sw){inner.style.transition='transform .2s';inner.style.transform='';inner._sw=false;return;}
-        go('detail',{hid:el.getAttribute('data-hid'),origin:cur});
+        go('detail',{hid:el.getAttribute('data-hid'),origin:cur,date:el.getAttribute('data-date')});
       }
     };
   });
@@ -926,7 +961,7 @@ function renderDetail(){
   var h=S.habits.find(function(x){return x.id===detailHid;});if(!h)return;
   document.getElementById('d-hdr-title').textContent=h.title;
   var t=today(),sat=detailSat,days=wdays(sat),dlbls=['Sat','Sun','Mon','Tue','Wed','Thu','Fri'];
-  var sk=streak(h),td=timesDone(h),tdur=totalDur(h),gp=goalPct(h),consAll=allTimeConsistency(h);
+  var sk=streak(h),bsk=bestStreak(h),td=timesDone(h),tdur=totalDur(h),gp=goalPct(h),consAll=allTimeConsistency(h);
   var cons30=consistencyPct(h,addDays(today(),-29),today());
   var cons7=consistencyPct(h,addDays(today(),-6),today());
   var wH=days.map(function(d,i){
@@ -972,7 +1007,7 @@ function renderDetail(){
 
   var html='<div class="det-hero" style="background:'+h.color+';border-bottom:1px solid var(--sep)">'+hIco(h,52)+'<div style="font-size:22px;font-weight:700;letter-spacing:-.2px;margin-top:8px">'+esc(h.title)+'</div><div class="det-sched">'+esc(schedLbl(h,detailDate))+'</div>'+(aspectOf(h)?'<span style="display:inline-block;margin-top:8px;margin-right:6px;font-size:12px;background:rgba(0,0,0,.06);color:rgba(0,0,0,.6);padding:3px 10px;border-radius:20px;font-weight:600">'+esc(aspectOf(h).l)+'</span>':'')+(isPaused(h)?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(245,158,11,.18);color:#92400E;padding:3px 10px;border-radius:20px;font-weight:600">⏸ '+esc(pauseLabel(h))+'</span>':'')+(h.streakReq===false?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(245,158,11,.15);color:#92400E;padding:3px 10px;border-radius:20px;font-weight:500">Excluded from day streak</span>':'')+(h.arc?'<span style="display:inline-block;margin-top:8px;font-size:12px;background:rgba(239,68,68,.12);color:var(--r);padding:3px 10px;border-radius:20px;font-weight:500">Archived</span>':'')+'</div>'+
     '<div class="sec" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px"><span>Week</span><div style="display:flex;gap:4px"><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="detailSat=addDays(detailSat,-7);renderDetail()">'+ico('chevL',18,'var(--t2)')+'</button><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="detailSat=addDays(detailSat,7);renderDetail()">'+ico('chevR',18,'var(--t2)')+'</button></div></div><div class="wstrip">'+wH+'</div>'+
-    '<div class="sgrid">'+(sk?'<div class="sb"><div class="sbv">'+sk.v+'</div><div class="sbl">Streak ('+sk.u+')</div></div>':'<div class="sb"><div class="sbv">—</div><div class="sbl">Streak</div></div>')+'<div class="sb"><div class="sbv">'+td+'</div><div class="sbl">Times done</div></div><div class="sb"><div class="sbv">'+fmtDur(tdur)+'</div><div class="sbl">Productive</div></div><div class="sb"><div class="sbv">'+(gp!==null?gp+'%':'—')+'</div><div class="sbl">Goal progress</div></div></div>'+
+    '<div class="sgrid" style="grid-template-columns:1fr 1fr 1fr">'+(sk?'<div class="sb"><div class="sbv">'+sk.v+'</div><div class="sbl">Streak ('+sk.u+')</div></div>':'<div class="sb"><div class="sbv">—</div><div class="sbl">Streak</div></div>')+(bsk&&bsk.v>0?'<div class="sb"><div class="sbv">🏆 '+bsk.v+'</div><div class="sbl">Best streak ('+bsk.u+')</div></div>':'<div class="sb"><div class="sbv">—</div><div class="sbl">Best streak</div></div>')+'<div class="sb"><div class="sbv">'+td+'</div><div class="sbl">Times done</div></div><div class="sb"><div class="sbv">'+fmtDur(tdur)+'</div><div class="sbl">Productive</div></div><div class="sb"><div class="sbv">'+(gp!==null?gp+'%':'—')+'</div><div class="sbl">Goal progress</div></div></div>'+
     '<div class="sec">Consistency</div><div class="sgrid" style="grid-template-columns:1fr 1fr 1fr"><div class="sb"><div class="sbv">'+(cons7!==null?cons7+'%':'—')+'</div><div class="sbl">Last 7 days</div></div><div class="sb"><div class="sbv">'+(cons30!==null?cons30+'%':'—')+'</div><div class="sbl">Last 30 days</div></div><div class="sb"><div class="sbv">'+(consAll!==null?consAll+'%':'—')+'</div><div class="sbl">All-time</div></div></div>'+goalH+selH+pausesH+
     '<div class="sec">Options</div><div class="list-box">'+(h.type!=='oneTime'?'<div class="orow" id="det-pause-btn">'+ico(isPaused(h)?'play':'pause',20,'var(--t2)')+'<span class="orow-text">'+(isPaused(h)?'Resume habit':'Pause habit')+'</span>'+ico('chevR',18,'var(--t3)')+'</div>':'')+'<div class="orow" id="det-arc-btn">'+ico(h.arc?'unarch':'archive',20,'var(--t2)')+'<span class="orow-text">'+(h.arc?'Unarchive':'Archive')+'</span>'+ico('chevR',18,'var(--t3)')+'</div></div><div style="height:24px"></div>';
   document.getElementById('s-detail-body').innerHTML=html;
